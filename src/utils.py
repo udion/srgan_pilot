@@ -5,6 +5,7 @@ TODO:
 """
 
 import random
+import numpy as np
 
 from torchvision import transforms
 import matplotlib.pyplot as plt
@@ -48,3 +49,9 @@ class Visualizer:
                 self.fake_hr_image_ph.set_data(fake_hr_image)
 
             self.figure.canvas.draw()
+
+def RRMSE(imgRef, imgT):
+    diff = imgRef - imgT
+    diff2 = diff**2
+    r = np.sqrt(np.sum(diff2)/np.sum(imgRef**2))
+    return r
