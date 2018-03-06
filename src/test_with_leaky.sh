@@ -1,0 +1,1 @@
+python test_w_leakyrelu.py --dataset folder --dataroot ../datasets/cifar10/test/ --imageSize 16 --upSampling 2 --cuda --generatorWeights ../checkpoints/generator_final.pth --discriminatorWeights ../checkpoints/discriminator_final.pth
