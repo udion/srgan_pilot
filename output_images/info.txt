@@ -1,0 +1,4 @@
+This contains the output of various experiments of the srgan on different datasets
+the folder names usually give it all by their name as the convention is
+
+dataset_epochNum_downScale_to_upScaleFact_descriptionOfNetwork
