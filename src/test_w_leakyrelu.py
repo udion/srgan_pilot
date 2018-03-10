@@ -11,7 +11,7 @@ import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
-from models_wo_swish import Generator, Discriminator, FeatureExtractor
+from models_leaky import Generator, Discriminator, FeatureExtractor
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='cifar100', help='cifar10 | cifar100 | folder')

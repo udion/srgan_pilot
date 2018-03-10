@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 
 from tensorboard_logger import configure, log_value
 
-from models_wo_swish import Generator, Discriminator, FeatureExtractor
+from models_leaky import Generator, Discriminator, FeatureExtractor
 from utils import Visualizer
 
 parser = argparse.ArgumentParser()
