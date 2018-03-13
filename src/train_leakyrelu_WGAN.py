@@ -89,7 +89,8 @@ print(feature_extractor)
 content_criterion = nn.MSELoss()
 adversarial_criterion = nn.BCELoss()
 
-ones_const = Variable(torch.ones(opt.batchSize, 1))
+one_const = Variable(torch.ones(opt.batchSize, 1))
+onebar_const = one_const*-1
 
 # if gpu is to be used
 if opt.cuda:
@@ -98,12 +99,12 @@ if opt.cuda:
 	feature_extractor.cuda()
 	content_criterion.cuda()
 	adversarial_criterion.cuda()
-	ones_const = ones_const.cuda()
+	one_const = one_const.cuda()
 
 optim_G = optim.Adam(G.parameters(), lr=opt.GLR)
 optim_D = optim.Adam(D.parameters(), lr=opt.DLR)
 
-configure('logs/'+ opt.dataset + '-' + str(opt.batchSize)+ str(opt.dataroot[1]) + '-' + str(opt.GLR) + '-' + str(opt.DLR), flush_secs=5)
+configure('logs/'+ opt.dataset + '-'+'wgan'+ str(opt.batchSize)+ '-' + str(opt.GLR) + '-' + str(opt.DLR), flush_secs=5)
 print('I configured .. ')
 # visualizer = Visualizer(image_size=opt.imageSize*opt.upSampling)
 
@@ -239,14 +240,15 @@ for epoch in range(opt.nEpochs):
 
 		G_content_loss = content_criterion(high_res_fakev, high_res_realv) + 0.006*content_criterion(fake_features, real_features)
 		mean_G_content_loss += G_content_loss.data[0]
-		G_adversarial_loss = adversarial_criterion(D(high_res_fakev), ones_const)
+		# G_adversarial_loss = adversarial_criterion(D(high_res_fakev), one_const)
+		G_adversarial_loss = -1*D(high_res_fakev).mean()
 		mean_G_adversarial_loss += G_adversarial_loss.data[0]
 
 		G_total_loss = G_content_loss + 1e-3*G_adversarial_loss
 		mean_G_total_loss += G_total_loss.data[0]
 		
 		G_total_loss.backward()
-		optim_G.step()   
+		optim_G.step()
 		
 		######### Status and display #########
 		sys.stdout.write('\r[%d/%d][%d/%d] Discriminator_Loss: %.4f, D_loss_wass: %.4f, gradient penalty: %.4f, G_Loss (Content/Advers/Total): %.4f/%.4f/%.4f' %
