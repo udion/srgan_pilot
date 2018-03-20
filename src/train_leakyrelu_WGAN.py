@@ -233,11 +233,10 @@ for epoch in range(opt.nEpochs):
 			D_loss.backward()
 			
 			mean_D_loss += D_loss.data[0]
-			D_loss_dummy = adversarial_criterion(D(high_res_realv), target_real) + adversarial_criterion(D(Variable(high_res_fakev.data)), target_fake)
-			# mean_D_loss_dummy = D_loss_dummy.mean()
-			print('<==== Discriminator training epoch: {}/{}, iteration:{}/{}, nDiscri: {}/{} =======>\n'.format(epoch, opt.nEpochs, i, len(dataloader), nd, N_discri))
-			print('dummy_loss: {}, W-loss: {}, gradP: {}, loss:{}'.format(D_loss_dummy.data[0], D_loss_wass.data[0], gradient_penalty.data[0], D_loss.data[0]))
-			
+			# D_loss_dummy = adversarial_criterion(D(high_res_realv), target_real) + adversarial_criterion(D(Variable(high_res_fakev.data)), target_fake)
+			# print('<==== Discriminator training epoch: {}/{}, iteration:{}/{}, nDiscri: {}/{} =======>'.format(epoch, opt.nEpochs, i, len(dataloader), nd, N_discri))
+			# print('dummy_loss: {}, W-loss: {}, gradP: {}, loss:{}'.format(D_loss_dummy.data[0], D_loss_wass.data[0], gradient_penalty.data[0], D_loss.data[0]))
+			# print('\n')
 			optim_D.step()
 
 		######### Train G #########
@@ -258,19 +257,18 @@ for epoch in range(opt.nEpochs):
 		mean_G_adversarial_loss += G_adversarial_loss.data[0]
 		mean_G_total_loss += G_total_loss.data[0]
 		
-		G_adversarial_loss_dummy = adversarial_criterion(D(high_res_fakev), one_const)
-		G_total_loss_dummy = G_content_loss + 1e-3*G_adversarial_loss_dummy
-		
-		print('<======== generator ============>')
-		print('dummy_adv_loss: {}, dummy_total_loss: {}, content_loss: {},  adv_loss: {}, total_loss: {}'.format(
-			G_adversarial_loss_dummy.data[0], G_total_loss_dummy.data[0], G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
+		# G_adversarial_loss_dummy = adversarial_criterion(D(high_res_fakev), one_const)
+		# G_total_loss_dummy = G_content_loss + 1e-3*G_adversarial_loss_dummy
+		# print('<======== generator ============>')
+		# print('dummy_adv_loss: {}, dummy_total_loss: {}, content_loss: {},  adv_loss: {}, total_loss: {}\n'.format(
+		# 	G_adversarial_loss_dummy.data[0], G_total_loss_dummy.data[0], G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
 		
 		G_total_loss.backward()
 		optim_G.step()
 		
 		######### Status and display #########
-		sys.stdout.write('\r[%d/%d][%d/%d] Discriminator_Loss: %.4f, D_loss_wass: %.4f, gradient penalty: %.4f, G_Loss (Content/Advers/Total): %.4f/%.4f/%.4f' %
-			(epoch, opt.nEpochs, i, len(dataloader), D_loss.data[0], D_loss_wass, gradient_penalty, G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
+		sys.stdout.write('\r[%d/%d][%d/%d] D_Loss (Wasserstein/GradP/Total): %.4f/%.4f/%.4f, G_Loss (Content/Advers/Total): %.4f/%.4f/%.4f' %
+			(epoch, opt.nEpochs, i, len(dataloader), D_loss_wass, gradient_penalty, D_loss.data[0], G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
 		# visualizer.show(low_res, high_res_real.cpu().data, high_res_fake.cpu().data)
 	sys.stdout.write('\r[%d/%d][%d/%d] Discriminator_mean_loss: %.4f,  G_mean_Loss (Content/Advers/Total): %.4f/%.4f/%.4f' % 
 	(epoch, opt.nEpochs, i, len(dataloader), mean_D_loss/len(dataloader), mean_G_content_loss/len(dataloader), mean_G_adversarial_loss/len(dataloader), mean_G_total_loss/len(dataloader)))
@@ -285,5 +283,6 @@ for epoch in range(opt.nEpochs):
 	torch.save(D.state_dict(), '{}/D_final.pth'.format(opt.out+'/'+opt.modelName))
 
 # Avoid closing
+print('hey ... it\s done :)')
 while True:
 	pass
