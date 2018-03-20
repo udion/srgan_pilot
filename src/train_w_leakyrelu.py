@@ -197,6 +197,7 @@ for epoch in range(opt.nEpochs):
 
 		generator_content_loss = content_criterion(high_res_fake, high_res_real) + 0.006*content_criterion(fake_features, real_features)
 		mean_generator_content_loss += generator_content_loss.data[0]
+		
 		generator_adversarial_loss = adversarial_criterion(discriminator(high_res_fake), ones_const)
 		mean_generator_adversarial_loss += generator_adversarial_loss.data[0]
 
