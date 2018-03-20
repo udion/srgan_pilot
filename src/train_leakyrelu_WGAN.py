@@ -120,42 +120,42 @@ print('I configured .. ')
 low_res = torch.FloatTensor(opt.batchSize, 3, opt.imageSize, opt.imageSize)
 
 # Pre-train G using raw MSE loss
- print('G pre-training')
- for epoch in range(2):
- 	mean_G_content_loss = 0.0
+print('G pre-training')
+for epoch in range(2):
+	mean_G_content_loss = 0.0
 
- 	for i, data in enumerate(dataloader):
- 		# Generate data
- 		high_res_real, _ = data
+	for i, data in enumerate(dataloader):
+		# Generate data
+		high_res_real, _ = data
 
- 		# Downsample images to low resolution
- 		for j in range(opt.batchSize):
- 			low_res[j] = scale(high_res_real[j])
- 			high_res_real[j] = normalize(high_res_real[j])
+		# Downsample images to low resolution
+		for j in range(opt.batchSize):
+			low_res[j] = scale(high_res_real[j])
+			high_res_real[j] = normalize(high_res_real[j])
 
- 		# Generate real and fake inputs
- 		if opt.cuda:
- 			high_res_real = Variable(high_res_real.cuda())
- 			high_res_fake = G(Variable(low_res).cuda())
- 		else:
- 			high_res_real = Variable(high_res_real)
- 			high_res_fake = G(Variable(low_res))
+		# Generate real and fake inputs
+		if opt.cuda:
+			high_res_real = Variable(high_res_real.cuda())
+			high_res_fake = G(Variable(low_res).cuda())
+		else:
+			high_res_real = Variable(high_res_real)
+			high_res_fake = G(Variable(low_res))
 
- 		######### Train G #########
- 		G.zero_grad()
+		######### Train G #########
+		G.zero_grad()
 
- 		G_content_loss = content_criterion(high_res_fake, high_res_real)
- 		mean_G_content_loss += G_content_loss.data[0]
+		G_content_loss = content_criterion(high_res_fake, high_res_real)
+		mean_G_content_loss += G_content_loss.data[0]
 
- 		G_content_loss.backward()
- 		optim_G.step()
+		G_content_loss.backward()
+		optim_G.step()
 
- 		######### Status and display #########
- 		sys.stdout.write('\r[%d/%d][%d/%d] G_MSE_Loss: %.4f' % (epoch, 2, i, len(dataloader), G_content_loss.data[0]))
- 		# visualizer.show(low_res, high_res_real.cpu().data, high_res_fake.cpu().data)
+		######### Status and display #########
+		sys.stdout.write('\r[%d/%d][%d/%d] G_MSE_Loss: %.4f' % (epoch, 2, i, len(dataloader), G_content_loss.data[0]))
+		# visualizer.show(low_res, high_res_real.cpu().data, high_res_fake.cpu().data)
 
- 	sys.stdout.write('\r[%d/%d][%d/%d] G_MSE_Loss: %.4f\n' % (epoch, 2, i, len(dataloader), mean_G_content_loss/len(dataloader)))
- 	log_value('G_mse_loss', mean_G_content_loss/len(dataloader), epoch)
+	sys.stdout.write('\r[%d/%d][%d/%d] G_MSE_Loss: %.4f\n' % (epoch, 2, i, len(dataloader), mean_G_content_loss/len(dataloader)))
+	log_value('G_mse_loss', mean_G_content_loss/len(dataloader), epoch)
 
 # Do checkpointing
 torch.save(G.state_dict(), '%s/G_pretrain.pth' % opt.out+'/'+opt.modelName)
@@ -166,7 +166,7 @@ optim_D = optim.Adam(D.parameters(), lr=opt.DLR*0.1)
 
 ############# for WGAN training ##################################
 N_discri = 5 #D trained 5 times per training of G
-LAMBDA = 10
+LAMBDA = 2
 def calc_gp(D, real_data, fake_data):
 	eps = torch.rand(opt.batchSize, 1,1,1)
 	eps = eps.expand(real_data.size())
