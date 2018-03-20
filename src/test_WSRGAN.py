@@ -4,7 +4,7 @@ import os
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
+from torch.autograd import Variable, grad
 
 import torchvision
 import torchvision.datasets as datasets
@@ -176,7 +176,7 @@ for i, data in enumerate(dataloader):
 
 	generator_content_loss = content_criterion(high_res_fakev, high_res_realv) + 0.006*content_criterion(fake_features, real_features)
 	mean_generator_content_loss += generator_content_loss.data[0]
-	generator_adversarial_loss = -1*(D(high_res_fakev), target_real)
+	G_adversarial_loss = -1*D(high_res_fakev).mean()
 	mean_generator_adversarial_loss += generator_adversarial_loss.data[0]
 
 	generator_total_loss = generator_content_loss + 1e-3*generator_adversarial_loss
