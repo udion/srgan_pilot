@@ -166,7 +166,7 @@ optim_D = optim.Adam(D.parameters(), lr=opt.DLR*0.1)
 
 ############# for WGAN training ##################################
 N_discri = 5 #D trained 5 times per training of G
-LAMBDA = 2
+LAMBDA = 1.5
 def calc_gp(D, real_data, fake_data):
 	eps = torch.rand(opt.batchSize, 1,1,1)
 	eps = eps.expand(real_data.size())
@@ -262,8 +262,8 @@ for epoch in range(opt.nEpochs):
 		G_total_loss_dummy = G_content_loss + 1e-3*G_adversarial_loss_dummy
 		
 		print('<======== generator ============>')
-		print('dummy_adv_loss: {}, dummy_total_loss: {}, adv_loss: {}, total_loss: {}'.format(
-			G_adversarial_loss_dummy.data[0], G_total_loss_dummy.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
+		print('dummy_adv_loss: {}, dummy_total_loss: {}, content_loss: {},  adv_loss: {}, total_loss: {}'.format(
+			G_adversarial_loss_dummy.data[0], G_total_loss_dummy.data[0], G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
 		
 		G_total_loss.backward()
 		optim_G.step()
