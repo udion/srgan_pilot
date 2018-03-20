@@ -158,7 +158,7 @@ for epoch in range(2):
 	log_value('G_mse_loss', mean_G_content_loss/len(dataloader), epoch)
 
 # Do checkpointing
-torch.save(G.state_dict(), '%s/G_pretrain.pth' % opt.out+'/'+opt.modelName)
+torch.save(G.state_dict(), '{}/G_pretrain.pth'.format(opt.out+'/'+opt.modelName))
 
 # SRGAN training
 optim_G = optim.Adam(G.parameters(), lr=opt.GLR*0.1)
@@ -281,8 +281,8 @@ for epoch in range(opt.nEpochs):
 	log_value('D_loss', mean_D_loss/len(dataloader), epoch)
 
 	# Do checkpointing
-	torch.save(G.state_dict(), '%s/G_final.pth' % opt.out+'/'+opt.modelName)
-	torch.save(D.state_dict(), '%s/D_final.pth' % opt.out+'/'+opt.modelName)
+	torch.save(G.state_dict(), '{}/G_final.pth'.format(opt.out+'/'+opt.modelName))
+	torch.save(D.state_dict(), '{}/D_final.pth'.format(opt.out+'/'+opt.modelName))
 
 # Avoid closing
 while True:
