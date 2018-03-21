@@ -104,8 +104,8 @@ onebar_const = one_const*-1
 
 # if gpu is to be used
 if opt.cuda:
-	generator.cuda()
-	discriminator.cuda()
+	G.cuda()
+	D.cuda()
 	feature_extractor.cuda()
 	content_criterion.cuda()
 	adversarial_criterion.cuda()
@@ -152,10 +152,10 @@ for i, data in enumerate(dataloader):
 	# Generate real and fake inputs
 	if opt.cuda:
 		high_res_realv = Variable(high_res_real.cuda())
-		high_res_fakev = generator(Variable(low_res).cuda())
+		high_res_fakev = G(Variable(low_res).cuda())
 	else:
 		high_res_realv = Variable(high_res_real)
-		high_res_fakev = generator(Variable(low_res))
+		high_res_fakev = G(Variable(low_res))
 	
 	######### Test discriminator #########
 	# with real data
@@ -177,18 +177,18 @@ for i, data in enumerate(dataloader):
 	generator_content_loss = content_criterion(high_res_fakev, high_res_realv) + 0.006*content_criterion(fake_features, real_features)
 	mean_generator_content_loss += generator_content_loss.data[0]
 	G_adversarial_loss = -1*D(high_res_fakev).mean()
-	mean_generator_adversarial_loss += generator_adversarial_loss.data[0]
+	mean_generator_adversarial_loss += G_adversarial_loss.data[0]
 
-	generator_total_loss = generator_content_loss + 1e-3*generator_adversarial_loss
+	generator_total_loss = generator_content_loss + 1e-3*G_adversarial_loss
 	mean_generator_total_loss += generator_total_loss.data[0]
 
 	######### Status and display #########
 	sys.stdout.write('\r[%d/%d] D_Loss (Wasserstein/GradP/Total): %.4f/%.4f/%.4f, G_Loss (Content/Advers/Total): %.4f/%.4f/%.4f' %
-		(i, len(dataloader), D_loss_wass, gradient_penalty, D_loss.data[0], G_content_loss.data[0], G_adversarial_loss.data[0], G_total_loss.data[0]))
+		(i, len(dataloader), D_loss_wass, gradient_penalty, D_loss.data[0], generator_content_loss.data[0], G_adversarial_loss.data[0], generator_total_loss.data[0]))
 
 	for j in range(opt.batchSize):
-		save_image(unnormalize(high_res_real.data[j]), dst_high_real + str(i*opt.batchSize + j) + '.png')
-		save_image(unnormalize(high_res_fake.data[j]), dst_high_fake + str(i*opt.batchSize + j) + '.png')
+		save_image(unnormalize(high_res_realv.data[j]), dst_high_real + str(i*opt.batchSize + j) + '.png')
+		save_image(unnormalize(high_res_fakev.data[j]), dst_high_fake + str(i*opt.batchSize + j) + '.png')
 		save_image(unnormalize(low_res[j]), dst_low + str(i*opt.batchSize + j) + '.png')
 
 sys.stdout.write('\r[%d/%d] Discriminator_Loss: %.4f Generator_Loss (Content/Advers/Total): %.4f/%.4f/%.4f\n' % 
