@@ -3,6 +3,12 @@
 
 #data related
 datasets/
+**zip
+**tar
+**png
+**jpg
+**PNG
+**JPG
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
